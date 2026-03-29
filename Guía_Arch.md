@@ -1009,6 +1009,82 @@ umount -R /mnt
 
 ---
 
+## 9. Personalizaciones
+### 9.1 Cambiar los GIFs de Caelestia Shell (sessionGif y mediaGif)
+
+Caelestia Shell permite reemplazar fácilmente los GIFs por defecto:
+- **sessionGif**: GIF que aparece en el menú de sesión (`logout` / `shutdown` / `restart`). Por defecto es `kurukuru.gif`.
+- **mediaGif**: GIF que aparece en el reproductor de música/media player. Por defecto es `bongocat.gif`.
+#### Crear las carpetas recomendadas
+```bash
+mkdir -p ~/Pictures/CaelestiaGifs/session
+mkdir -p ~/Pictures/CaelestiaGifs/media
+````
+#### Descargar y colocar tus GIFs
+- Descarga GIFs preferiblemente con **fondo transparente** (se ven mucho mejor).
+- Coloca los GIFs en las carpetas correspondientes:
+    - Para el menú de sesión → ~/Pictures/CaelestiaGifs/session/
+    - Para el reproductor de música → ~/Pictures/CaelestiaGifs/media/
+**Ejemplo:**
+Por si prefieres mover los Gifs desde la terminal
+```bash
+mv ~/Imágenes/"el_nombre.gif" ~/Pictures/CaelestiaGifs/session/
+```
+#### Editar la configuración (`Shell.json`)
+Abre el archivo de configuración:
+```bash
+nano ~/.config/caelestia/shell.json
+```
+Busca la sección "`paths`" y modifica las rutas usando **rutas absolutas** (no uses root:/assets/... para GIFs personalizados).
+
+**Ejemplo de configuración recomendada:**
+Tu archivo `Json`deberían de quedar de forma similar
+``` Json
+"paths": {
+  "wallpaperDir": "/home/Tu_usuario/Pictures/Wallpapers",
+	"sessionGif":"/home/Tu_usuario/Pictures/CaelestiaGifs/session/Nombre.gif",
+  "mediaGif": "/home/Tu_usuario/Pictures/CaelestiaGifs/media/tu-gif-musica.gif"
+}
+```
+
+> **Importante**: Reemplaza /home/Tu_usuario/ por tu usuario real (echo $HOME). Usa rutas absolutas completas.
+
+#### 4. Aplicar los cambios
+Guarda el archivo (`Ctrl + O` → Enter → `Ctrl + X` ) y reinicia Caelestia Shell:
+```
+pkill quickshell && caelestia shell
+```
+O usa el atajo de teclado: **Ctrl + Super + Alt + R**
+
+### 9.2 Herramienta recomendada: caelestia-gif
+Puedes instalar un gestor TUI para facilitar el cambio de GIFs:
+``` bash
+yay -S caelestia-gif
+```
+Ejecuta:
+``` bash
+/usr/bin/caelestia-gif --init
+```
+
+> Nota: En la versión actual (1.0.2) la TUI completa aún está en desarrollo, por lo que el método manual mediante `shell.json` suele ser más fiable.
+#### Ajustar velocidad de los GIFs (opcional)
+Si los GIFs se ven muy rápidos o lentos, puedes agregar estas claves dentro de la sección "`appearance`":
+```Json
+"appearance": {
+  "sessionGifSpeed": 0.8,
+  "mediaGifSpeedAdjustment": 250,
+  ...
+}
+```
+Valores recomendados iniciales:
+- **sessionGifSpeed:** entre 0.6 y 1.0
+- **mediaGifSpeedAdjustment:** entre 200 y 400
+
+---
+### 9.3 Consejos adicionales
+- Usa GIFs ligeros (< 3 MB) para mejor rendimiento.
+- Los GIFs con fondo transparente se ven mejor en el media player.
+- Si el cambio no se aplica inmediatamente, haz logout/login completo.
 ## Recursos Adicionales
 
 - [Wiki de Arch Linux](https://wiki.archlinux.org/) - Documentación oficial
@@ -1016,5 +1092,6 @@ umount -R /mnt
 - [AUR](https://aur.archlinux.org/) - Repositorio de usuarios
 - [Flathub](https://flathub.org/) - Aplicaciones Flatpak
 - [Hyprland Wiki](https://wiki.hyprland.org/) - Documentación de Hyprland
+- [Caelestia-Gifs](https://gitlab.com/gnoooo/caelestia-gif)
 
 ---
