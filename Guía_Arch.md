@@ -17,6 +17,7 @@ Esta bóveda documenta la configuración, mantenimiento y personalización del s
 6. [Gestión de Proyectos con Git](#6-gestión-de-proyectos-con-git)
 7. [Configurar Impresora](#7-configurar-impresora)
 8. [Utilidades del Sistema](#8-utilidades-del-sistema)
+9. [Configuración de Entorno Gráfico (Hyprland + Caelestia)](#1-configuración-de-entorno-gráfico-hyprland--caelestia)
 
 ---
 
@@ -1049,7 +1050,7 @@ Tu archivo `Json`deberían de quedar de forma similar
 
 > **Importante**: Reemplaza /home/Tu_usuario/ por tu usuario real (echo $HOME). Usa rutas absolutas completas.
 
-#### 4. Aplicar los cambios
+#### Aplicar los cambios
 Guarda el archivo (`Ctrl + O` → Enter → `Ctrl + X` ) y reinicia Caelestia Shell:
 ```
 pkill quickshell && caelestia shell
@@ -1092,6 +1093,9 @@ Valores recomendados iniciales:
 - [AUR](https://aur.archlinux.org/) - Repositorio de usuarios
 - [Flathub](https://flathub.org/) - Aplicaciones Flatpak
 - [Hyprland Wiki](https://wiki.hyprland.org/) - Documentación de Hyprland
-- [Caelestia-Gifs](https://gitlab.com/gnoooo/caelestia-gif)
+- [Caelestia-Gifs](https://gitlab.com/gnoooo/caelestia-gif) - Repo de la interfaz grafica Caelestia Shell Gifs
+- [Tenor](https://tenor.com/es/) - Buscador de Gifs
+- [Giphy](https://giphy.com/) - Buscador de Gifs
 
+> RECOMIENDACIÓN: Para buscar Gifs sin fondo usa Transparent Gifs en la barra de busqueda
 ---
