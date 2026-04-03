@@ -1086,6 +1086,65 @@ Valores recomendados iniciales:
 - Usa GIFs ligeros (< 3 MB) para mejor rendimiento.
 - Los GIFs con fondo transparente se ven mejor en el media player.
 - Si el cambio no se aplica inmediatamente, haz logout/login completo.
+## 10. Cambiar a otro shell
+### 10.1 Cambio de Shell / Dotfiles y Respaldo de Caelestia
+
+Si deseas probar un nuevo entorno (dotfiles) en Hyprland sin perder tu configuración actual de Caelestia Shell ni desinstalar las aplicaciones que ya tienes, el proceso es completamente seguro. 
+
+Para lograrlo, utilizaremos el comando `cp` (copiar) en lugar de mover o renombrar los archivos originales. Esto garantiza que tu configuración base quede aislada y protegida en un directorio de respaldo.
+
+#### Paso 1: Respaldar la configuración actual (Caelestia Shell)
+
+Antes de descargar o instalar cualquier dotfile nuevo, debes crear copias exactas de tus directorios de configuración gráfica actuales.
+
+Abre la terminal y ejecuta:
+
+```bash
+# 1. Crea un directorio específico para guardar tu respaldo
+mkdir -p ~/.config_caelestia_backup
+
+# 2. Copia de forma recursiva (-r) las carpetas clave de tu entorno actual
+cp -r ~/.config/hypr ~/.config_caelestia_backup/
+cp -r ~/.config/waybar ~/.config_caelestia_backup/
+cp -r ~/.config/rofi ~/.config_caelestia_backup/
+
+# Nota: Haz lo mismo con otras utilidades que uses (kitty, alacritty, wlogout, swaync, etc.)
+# cp -r ~/.config/kitty ~/.config_caelestia_backup/
+````
+
+Al hacer esto, tu configuración de Caelestia queda a salvo en la carpeta `~/.config_caelestia_backup`.
+
+#### Paso 2: Aplicar los nuevos dotfiles
+
+Una vez que tienes el respaldo asegurado, puedes aplicar el nuevo entorno:
+
+1. **Limpia el entorno activo:** Para evitar conflictos, elimina las carpetas originales que vas a reemplazar en tu `.config`.
+```bash 
+rm -rf ~/.config/hypr ~/.config/waybar ~/.config/rofi
+```
+
+2. **Instala los nuevos dotfiles:** Clona el repositorio del entorno que deseas probar y copia sus carpetas a tu `~/.config/` (o ejecuta su script de instalación si lo tiene).
+
+> **⚠️ Importante:** Si el nuevo entorno incluye un script tipo `install.sh`, léelo rápido antes de ejecutarlo para confirmar que solo interactúa con tu carpeta `~/.config` y no realiza cambios no deseados en el sistema.
+
+#### Paso 3: Restaurar Caelestia Shell (Volver a la normalidad)
+Cuando decidas que es momento de regresar a tu Caelestia Shell, el proceso consiste en limpiar lo nuevo y restaurar tu respaldo original:
+
+``` bash
+# 1. (Opcional) Si te gustó el entorno nuevo, respáldalo también antes de borrarlo
+# mkdir -p ~/.config_otro_tema && cp -r ~/.config/hypr ~/.config_otro_tema/
+
+# 2. Elimina la configuración del dotfile que estabas probando
+rm -rf ~/.config/hypr ~/.config/waybar ~/.config/rofi
+
+# 3. Restaura tus carpetas de Caelestia copiándolas de vuelta a .config
+cp -r ~/.config_caelestia_backup/hypr ~/.config/
+cp -r ~/.config_caelestia_backup/waybar ~/.config/
+cp -r ~/.config_caelestia_backup/rofi ~/.config/
+```
+
+Por último, simplemente recarga Hyprland (usando tu atajo de teclado para reiniciar el entorno o cerrando y volviendo a iniciar sesión). Tu sistema volverá a lucir exactamente como lo dejaste, y todas las aplicaciones (instaladas con `pacman` o `yay`) seguirán funcionando sin problemas.
+
 ## Recursos Adicionales
 
 - [Wiki de Arch Linux](https://wiki.archlinux.org/) - Documentación oficial
