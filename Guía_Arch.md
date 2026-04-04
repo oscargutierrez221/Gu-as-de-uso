@@ -1086,65 +1086,160 @@ Valores recomendados iniciales:
 - Usa GIFs ligeros (< 3 MB) para mejor rendimiento.
 - Los GIFs con fondo transparente se ven mejor en el media player.
 - Si el cambio no se aplica inmediatamente, haz logout/login completo.
-## 10. Cambiar a otro shell
-### 10.1 Cambio de Shell / Dotfiles y Respaldo de Caelestia
+## 10. Cambio de Shell (Por ejemplo, de Caelestia a Dank Material Shell)
 
-Si deseas probar un nuevo entorno (dotfiles) en Hyprland sin perder tu configuración actual de Caelestia Shell ni desinstalar las aplicaciones que ya tienes, el proceso es completamente seguro. 
+Dank Material Shell es actualmente mi shell principal. Es compatible con Hyprland y ofrece theming dinámico Material muy bueno.
 
-Para lograrlo, utilizaremos el comando `cp` (copiar) en lugar de mover o renombrar los archivos originales. Esto garantiza que tu configuración base quede aislada y protegida en un directorio de respaldo.
+### 10.1 Respaldo seguro de Caelestia Shell (antes de cambiar)
 
-#### Paso 1: Respaldar la configuración actual (Caelestia Shell)
-
-Antes de descargar o instalar cualquier dotfile nuevo, debes crear copias exactas de tus directorios de configuración gráfica actuales.
-
-Abre la terminal y ejecuta:
+**Siempre** haz un respaldo completo antes de instalar cualquier otro shell.
 
 ```bash
-# 1. Crea un directorio específico para guardar tu respaldo
 mkdir -p ~/.config_caelestia_backup
 
-# 2. Copia de forma recursiva (-r) las carpetas clave de tu entorno actual
+# Respaldos obligatorios
 cp -r ~/.config/hypr ~/.config_caelestia_backup/
-cp -r ~/.config/waybar ~/.config_caelestia_backup/
-cp -r ~/.config/rofi ~/.config_caelestia_backup/
+cp -r ~/.config/caelestia ~/.config_caelestia_backup/
 
-# Nota: Haz lo mismo con otras utilidades que uses (kitty, alacritty, wlogout, swaync, etc.)
-# cp -r ~/.config/kitty ~/.config_caelestia_backup/
+# Opcionales (según lo que uses)
+cp -r ~/.config/kitty ~/.config_caelestia_backup/ 2>/dev/null || true
+cp -r ~/.config/alacritty ~/.config_caelestia_backup/ 2>/dev/null || true
+cp -r ~/.config/swaync ~/.config_caelestia_backup/ 2>/dev/null || true
 ````
 
-Al hacer esto, tu configuración de Caelestia queda a salvo en la carpeta `~/.config_caelestia_backup`.
-
-#### Paso 2: Aplicar los nuevos dotfiles
-
-Una vez que tienes el respaldo asegurado, puedes aplicar el nuevo entorno:
-
-1. **Limpia el entorno activo:** Para evitar conflictos, elimina las carpetas originales que vas a reemplazar en tu `.config`.
-```bash 
-rm -rf ~/.config/hypr ~/.config/waybar ~/.config/rofi
-```
-
-2. **Instala los nuevos dotfiles:** Clona el repositorio del entorno que deseas probar y copia sus carpetas a tu `~/.config/` (o ejecuta su script de instalación si lo tiene).
-
-> **⚠️ Importante:** Si el nuevo entorno incluye un script tipo `install.sh`, léelo rápido antes de ejecutarlo para confirmar que solo interactúa con tu carpeta `~/.config` y no realiza cambios no deseados en el sistema.
-
-#### Paso 3: Restaurar Caelestia Shell (Volver a la normalidad)
-Cuando decidas que es momento de regresar a tu Caelestia Shell, el proceso consiste en limpiar lo nuevo y restaurar tu respaldo original:
-
+Verifica el respaldo:
 ``` bash
-# 1. (Opcional) Si te gustó el entorno nuevo, respáldalo también antes de borrarlo
-# mkdir -p ~/.config_otro_tema && cp -r ~/.config/hypr ~/.config_otro_tema/
-
-# 2. Elimina la configuración del dotfile que estabas probando
-rm -rf ~/.config/hypr ~/.config/waybar ~/.config/rofi
-
-# 3. Restaura tus carpetas de Caelestia copiándolas de vuelta a .config
-cp -r ~/.config_caelestia_backup/hypr ~/.config/
-cp -r ~/.config_caelestia_backup/waybar ~/.config/
-cp -r ~/.config_caelestia_backup/rofi ~/.config/
+ls ~/.config_caelestia_backup
 ```
 
-Por último, simplemente recarga Hyprland (usando tu atajo de teclado para reiniciar el entorno o cerrando y volviendo a iniciar sesión). Tu sistema volverá a lucir exactamente como lo dejaste, y todas las aplicaciones (instaladas con `pacman` o `yay`) seguirán funcionando sin problemas.
+Debería de aparecerte el listado de carpetas y archivos copiados 
+### 10.2 Instalación de Dank Material Shell
+```bash
+# Actualiza el sistema primero
+sudo pacman -Syu
 
+# Instala DMS con el script oficial
+curl -fsSL https://install.danklinux.com | sh
+```
+Durante la instalación:
+
+- Elige **Hyprland** como compositor.
+- Elige **kitty** como terminal.
+- **No permitas** que sobrescriba tus configuraciones (elige "No" cuando pregunte).
+
+Después de instalar, reinicia Hyprland (`logout/login`).
+### 10.3 Configuraciones recomendadas post-instalación
+
+Agrega o modifica en `~/.config/hypr/hyprland.conf`:
+
+``` Json
+input { 
+	kb_layout = latam,us 
+	kb_options = grp:alt_shift_toggle 
+	repeat_rate = 50 
+	repeat_delay = 180 
+	follow_mouse = 1 
+	sensitivity = 0.8 
+} 
+
+decoration { 
+	rounding = 12 
+	active_opacity = 0.95 
+	inactive_opacity = 0.85 
+	fullscreen_opacity = 1.0 
+	shadow { 
+		enabled = true 
+		range = 30 
+		render_power = 5 
+		offset = 0 5 
+		color = rgba(00000070) 
+		} 
+	} 
+
+# Kitty siempre con fish 
+bind = SUPER, Return, exec, kitty fish 
+
+# o el atajo perzonalizado que uses 
+bind = SUPER, F, fullscreenstate, 0 0 
+
+# Toggle fullscreen (entra y sale) 
+bind = ALT, minus, movetoworkspace, +1 
+
+bind = CTRL, minus, movetoworkspace, -1
+
+```
+
+Casi siempre el archivo de configuración contiene los apartados de `input` y `decoration`, asegúrate de revisarlos bien. En cuanto a los atajos personalizados puedes configurarlos en este archivo o en los ajustes del `shell`
+
+**Wallpaper selector** (como en Caelestia):
+
+- Abre `Settings` de `DMS` → sección **Fondo de pantalla**.
+- Selecciona tu carpeta `~/Pictures/Wallpapers` (o la que uses).
+- Activa **Fill** y prueba el selector de imágenes. `DMS` genera automáticamente colores el Material shell.
+
+**Launcher (Spotlight)**:
+
+- Configurado en `DMS` con `dms ipc call spotlight toggle` (recomendado con **SUPER + Space** por estabilidad aunque si bien puedes cambiar el atajo).
+### 10.4 Cómo volver a Caelestia Shell
+```bash
+# Eliminar configuración de DMS
+rm -rf ~/.config/hypr/dms ~/.config/hypr/dms_* 2>/dev/null || true
+
+# Restaurar Caelestia
+cp -r ~/.config_caelestia_backup/hypr ~/.config/
+cp -r ~/.config_caelestia_backup/caelestia ~/.config/
+
+hyprctl reload   # o logout/login
+```
+
+---
+## 11. Pantalla de Inicio de Sesión (`Login Screen / Greeter`)
+El login predeterminado de Arch suele ser muy básico. Recomiendo cambiarlo a `SDDM` con un tema moderno.
+### 11.1 Instalación de `SDDM` + Tema bonito
+```bash
+# Instalar paquetes necesarios
+sudo pacman -S sddm qt6-base qt6-declarative qt6-svg qt6-virtualkeyboard qt6-multimedia-ffmpeg
+
+# Instalar tema recomendado (Sugar Candy)
+yay -S sddm-theme-sugar-candy-git
+
+# Habilitar SDDM
+sudo systemctl disable --now greetd 2>/dev/null || true
+sudo systemctl enable --now sddm
+```
+### 11.2 Configurar el tema
+``` bash
+sudo mkdir -p /etc/sddm.conf.d
+sudo nano /etc/sddm.conf.d/theme.conf
+```
+
+**Contenido:**
+``` Json
+[Theme] 
+Current=Sugar-Candy 
+
+[General] DisplayServer=wayland`
+```
+
+Guarda y reinicia `SDDM` (cerrará tu sesión):
+``` bash
+sudo systemctl restart sddm
+```
+### 11.3 Personalizar el fondo y estilo del login
+1. Copia uno de tus wallpapers favoritos a la carpeta del tema:
+``` bash
+sudo cp ~/Pictures/Wallpapers/tu-favorito.jpg /usr/share/sddm/themes/Sugar-Candy/Backgrounds/
+```
+
+2. Edita el archivo de configuración del tema (ruta aproximada):
+```bash
+sudo nano /usr/share/sddm/themes/Sugar-Candy/theme.conf
+```
+Busca la línea de `Background` o `Image` y pon la ruta de tu imagen.
+
+3. Puedes cambiar colores, fuente, efecto de blur, etc., editando los archivos del tema (`CSS` y `QML`).
+
+> **Consejo**: Elige un wallpaper que combine con los colores que usa Dank Material Shell para que el login se sienta parte del mismo entorno.
 ## Recursos Adicionales
 
 - [Wiki de Arch Linux](https://wiki.archlinux.org/) - Documentación oficial
