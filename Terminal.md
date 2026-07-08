@@ -1,164 +1,236 @@
-# Guía de herramientas para la terminal
+# Guía de herramientas de terminal
 
-Guía práctica de instalación y uso de las herramientas de terminal configuradas en mi sistema: `fzf` + `fzf.fish`, `zoxide` y `glow`.
+Guía práctica de instalación y uso de las herramientas de terminal configuradas en este sistema: `fzf` + `fzf.fish`, `zoxide`, `glow` y `lazygit`.
 
-**Entorno de referencia:** Arch Linux, shell **fish**, terminal **Kitty**, HyDE dotfile en  **Hyprland**.
+Entorno de referencia: Arch Linux, shell **fish**, terminal **Kitty**, WM **Hyprland**.
 
 ---
 
 ## 1. fzf + fzf.fish
 
 ### ¿Qué es?
-`fzf` es un buscador difuso (fuzzy finder) de propósito general para la terminal. `fzf.fish` es un plugin para fish que lo integra directamente en la línea de comandos con atajos de teclado para buscar historial, archivos, variables y más.
+`fzf` es un buscador difuso (fuzzy finder) de propósito general para la terminal. `fzf.fish` es un plugin para fish que lo integra directamente en la línea de comandos con atajos de teclado.
 
 ### Instalación
 
-```bash
-# 1. Instalar el binario de fzf
+```fish
 sudo pacman -S fzf
-
-# 2. Instalar el gestor de plugins fisher (si no lo tienes)
 curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
 fisher install jorgebucaran/fisher
-
-# 3. Instalar el plugin fzf.fish
 fisher install PatrickF1/fzf.fish
-
-# 4. Recargar fish
 exec fish
 ```
 
-### Verificar instalación
-
-```bash
-fisher list
-```
-
-Debe aparecer `patrickf1/fzf.fish` en la lista.
-
-### Uso: atajos de teclado
+### Atajos de fzf.fish (dentro de fish)
 
 | Atajo | Función |
 |---|---|
-| `Ctrl+R` | Buscar en el historial de comandos |
-| `Ctrl+Alt+F` | Buscar archivos/directorios (inserta la ruta en la línea de comandos) |
-| `Ctrl+V` | Buscar variables de shell (`$HOME`, `$PATH`, etc.) |
-| `Ctrl+Alt+L` | Buscar en el log de git (`git log`) |
-| `Ctrl+Alt+S` | Buscar en el status de git (`git status`) |
+| <span style="color:#2563eb"><strong>`Ctrl+R`</strong></span> | <span style="color:#2563eb"><strong>Buscar en el historial de comandos</strong></span> |
+| <span style="color:#2563eb"><strong>`Ctrl+Alt+F`</strong></span> | <span style="color:#2563eb"><strong>Buscar archivos/directorios</strong></span> |
+| `Ctrl+V` | Buscar variables de shell |
+| `Ctrl+Alt+L` | Buscar en el log de git |
+| `Ctrl+Alt+S` | Buscar en el status de git |
 
-> **Nota:** `fzf.fish` inserta el resultado en la línea de comandos, no ejecuta acciones automáticamente (por ejemplo, no hace `cd` solo). Esto es una decisión de diseño del plugin para mantenerlo predecible.
+### Controles dentro de la ventana de fzf (cualquier búsqueda)
 
-### Personalizar atajos (opcional)
+| Tecla | Función |
+|---|---|
+| Escribir texto | Filtra resultados en vivo (fuzzy match) |
+| ↑ / ↓ o `Ctrl+P` / `Ctrl+N` | Mover selección |
+| <span style="color:#2563eb"><strong>`Enter`</strong></span> | <span style="color:#2563eb"><strong>Confirmar/insertar selección</strong></span> |
+| `Tab` | Seleccionar múltiples elementos (multi-select) |
+| `Shift+Tab` | Deseleccionar elemento |
+| <span style="color:#2563eb"><strong>`Esc` / `Ctrl+C`</strong></span> | <span style="color:#2563eb"><strong>Cancelar búsqueda</strong></span> |
+| `Ctrl+/` | Mostrar/ocultar panel de preview |
+| `Ctrl+U` | Limpiar la línea de búsqueda |
+| `Alt+Bksp` | Borrar la palabra anterior en la búsqueda |
 
-Si algún atajo choca con tu terminal o quieres cambiarlo:
+### Personalizar atajos de fzf.fish (opcional)
 
-```bash
+```fish
 fzf_configure_bindings --help
-```
-
-Esto muestra todas las opciones disponibles (`--history`, `--directory`, `--variables`, `--git_log`, `--git_status`) para reasignarlas. Ejemplo:
-
-```bash
 fzf_configure_bindings --variables=\e\cv
 ```
 
-Agrega la línea elegida a `~/.config/fish/config.fish` para que persista entre sesiones.
+Agrega la línea elegida a `~/.config/fish/config.fish` para que persista.
 
 ### Herramientas complementarias
-`fzf.fish` mejora automáticamente si tienes instalado:
-- `fd` — acelera la búsqueda de archivos (`sudo pacman -S fd`)
-- `bat` — mejora el preview de archivos con resaltado de sintaxis (`sudo pacman -S bat`)
+- `fd` — acelera la búsqueda de archivos: `sudo pacman -S fd`
+- `bat` — mejora el preview con resaltado de sintaxis: `sudo pacman -S bat`
 
 ---
 
 ## 2. zoxide
 
 ### ¿Qué es?
-Reemplazo inteligente de `cd`. Aprende qué directorios visitas más seguido y te permite saltar a ellos escribiendo solo una parte del nombre, sin importar en qué carpeta estés.
+Reemplazo inteligente de `cd` que aprende qué directorios visitas más y te deja saltar a ellos escribiendo solo un fragmento del nombre.
 
 ### Instalación
 
-```bash
+```fish
 sudo pacman -S zoxide
 ```
 
-### Configuración en fish
+Agrega a `~/.config/fish/config.fish`:
 
-Agrega esto a `~/.config/fish/config.fish`:
-
-```bash
+```fish
 zoxide init fish | source
 ```
 
-Recarga la shell:
-
-```bash
+```fish
 exec fish
 ```
 
-### Uso
+### Comandos
 
 | Comando | Función |
 |---|---|
-| `z nombre` | Salta al directorio que coincida con "nombre" (el más frecuente/reciente) |
-| `z nombre1 nombre2` | Salta a un directorio que coincida con ambos fragmentos (útil para rutas anidadas) |
-| `zi nombre` | Igual que `z`, pero si hay varias coincidencias abre un selector interactivo (usa `fzf` si está instalado) |
-| `z -` | Vuelve al directorio anterior |
-| `zoxide query nombre` | Muestra qué ruta resolvería `z nombre` sin moverte ahí |
-| `zoxide remove ruta` | Elimina una ruta de la base de datos de zoxide |
-
-### Cómo funciona
-Cada vez que usas `cd` normalmente (o `z`), zoxide registra esa ruta con un puntaje de frecuencia/recencia. Con el tiempo, `z proy` te llevará directo a `~/Documentos/trabajo/proyecto-x` aunque nunca hayas escrito esa ruta completa.
+| <span style="color:#2563eb"><strong>`z nombre`</strong></span> | <span style="color:#2563eb"><strong>Saltar al directorio más frecuente/reciente que coincida con "nombre"</strong></span> |
+| `z nombre1 nombre2` | Saltar a un directorio que coincida con ambos fragmentos (rutas anidadas) |
+| <span style="color:#2563eb"><strong>`zi nombre`</strong></span> | <span style="color:#2563eb"><strong>Igual que `z`, pero abre selector interactivo si hay varias coincidencias</strong></span> |
+| `z -` | Volver al directorio anterior |
+| `z ..` | Subir un nivel (comportamiento heredado de `cd`) |
+| `zoxide query nombre` | Ver qué ruta resolvería `z nombre` sin moverte ahí |
+| `zoxide add ruta` | Agregar manualmente una ruta a la base de datos |
+| `zoxide remove ruta` | Eliminar una ruta de la base de datos |
+| `zoxide import archivo` | Importar historial desde otra herramienta (autojump, z.sh, etc.) |
+| `zoxide init fish` | Genera el script de inicialización (ya usado en la config) |
 
 ---
 
 ## 3. glow
 
 ### ¿Qué es?
-Renderiza archivos Markdown con formato (títulos, negritas, listas, bloques de código con color) directamente en la terminal, sin necesidad de abrir un editor o navegador.
+Renderiza archivos Markdown con formato directamente en la terminal.
 
 ### Instalación
 
-```bash
+```fish
 sudo pacman -S glow
 ```
 
-### Uso
+### Comandos
 
 | Comando | Función |
 |---|---|
-| `glow archivo.md` | Muestra el archivo formateado en la terminal |
-| `glow` | Abre un selector de archivos `.md` en el directorio actual |
-| `glow -p archivo.md` | Fuerza modo paginado (como `less`), útil para archivos largos |
-| `glow https://raw.githubusercontent.com/usuario/repo/main/README.md` | Renderiza un Markdown remoto directo desde una URL |
-| `glow -s dark archivo.md` | Usa un estilo de color específico (`dark`, `light`, `auto`, etc.) |
+| <span style="color:#2563eb"><strong>`glow archivo.md`</strong></span> | <span style="color:#2563eb"><strong>Muestra el archivo formateado</strong></span> |
+| `glow` | Abre selector interactivo de archivos `.md` en el directorio actual |
+| `glow -p archivo.md` | Modo paginado (como `less`), útil para archivos largos |
+| `glow -s dark archivo.md` | Fuerza un estilo de color (`dark`, `light`, `auto`, `notty`) |
+| `glow -w 80 archivo.md` | Fuerza el ancho de renderizado a 80 columnas |
+| `glow https://raw.githubusercontent.com/usuario/repo/main/README.md` | Renderiza un Markdown remoto desde una URL |
 
-### Ejemplo práctico
-Para leer el README de cualquier repo clonado sin salir de la terminal:
+### Navegación dentro del selector interactivo (`glow` sin argumentos)
 
-```bash
-glow README.md
+| Tecla | Función |
+|---|---|
+| ↑ / ↓ | Navegar lista de archivos |
+| <span style="color:#2563eb"><strong>`Enter`</strong></span> | <span style="color:#2563eb"><strong>Abrir archivo seleccionado</strong></span> |
+| `/` | Buscar archivo por nombre |
+| `q` / `Esc` | Salir |
+
+---
+
+## 4. lazygit
+
+### ¿Qué es?
+TUI para git. Permite hacer stage, commit, push, pull, manejar branches y resolver conflictos sin memorizar comandos de git.
+
+### Instalación
+
+```fish
+sudo pacman -S lazygit
 ```
+
+### Uso básico
+
+```fish
+lazygit
+```
+
+### Atajos globales
+
+| Tecla | Función |
+|---|---|
+| `1` – `5` | Saltar a panel (Status, Files, Branches, Commits, Stash) |
+| `[` / `]` | Cambiar de pestaña dentro de un panel |
+| <span style="color:#2563eb"><strong>`P`</strong></span> | <span style="color:#2563eb"><strong>Push</strong></span> |
+| <span style="color:#2563eb"><strong>`p`</strong></span> | <span style="color:#2563eb"><strong>Pull</strong></span> |
+| `x` | Abrir menú de acciones/comandos |
+| `?` | Ver todos los atajos disponibles (cheatsheet) |
+| <span style="color:#2563eb"><strong>`q`</strong></span> | <span style="color:#2563eb"><strong>Salir</strong></span> |
+| `Esc` | Volver / cancelar |
+
+### Panel "Files" (staging y commits)
+
+| Tecla | Función |
+|---|---|
+| <span style="color:#2563eb"><strong>`Espacio`</strong></span> | <span style="color:#2563eb"><strong>Stage/unstage del archivo seleccionado</strong></span> |
+| `a` | Stage/unstage de todos los archivos |
+| <span style="color:#2563eb"><strong>`c`</strong></span> | <span style="color:#2563eb"><strong>Abrir cuadro para escribir mensaje de commit</strong></span> |
+| `C` | Commit usando tu editor de git configurado (para mensajes largos) |
+| `A` | Amend del último commit con lo que está en stage |
+| `d` | Descartar cambios del archivo seleccionado |
+| `D` | Abrir menú de opciones de descarte/reset |
+| `i` | Agregar archivo a `.gitignore` |
+| `e` | Editar archivo con tu editor por defecto |
+| `o` | Abrir archivo con la app del sistema |
+| `R` | Refrescar el estado |
+
+**Pasos para un commit típico:**
+1. Selecciona archivo(s) y presiona `Espacio` (o `a` para todos).
+2. Presiona `c`.
+3. Escribe el mensaje y presiona `Enter`.
+4. Presiona `P` para subirlo.
+
+### Panel "Branches"
+
+| Tecla | Función |
+|---|---|
+| <span style="color:#2563eb"><strong>`Espacio`</strong></span> | <span style="color:#2563eb"><strong>Checkout de la rama seleccionada</strong></span> |
+| `n` | Crear nueva rama |
+| `M` | Fusionar (merge) la rama seleccionada en la actual |
+| `r` | Rebase de la rama actual sobre la seleccionada |
+| `d` | Eliminar rama |
+
+### Panel "Commits"
+
+| Tecla | Función |
+|---|---|
+| `Espacio` / `Enter` | Ver archivos incluidos en el commit |
+| `r` | Reword (editar mensaje del commit) |
+| `s` | Squash del commit con el anterior |
+| `f` | Fixup con el commit anterior |
+| `d` | Eliminar commit (en rebase interactivo) |
+| `g` | Reset (mover HEAD) hasta este commit |
+
+### Panel "Stash"
+
+| Tecla | Función |
+|---|---|
+| `Espacio` | Aplicar el stash seleccionado |
+| `g` | Aplicar y eliminar (pop) el stash |
+| `d` | Eliminar el stash |
 
 ---
 
 ## Resumen rápido de instalación (todo junto)
 
-```bash
-sudo pacman -S fzf zoxide glow fd bat
+```fish
+sudo pacman -S fzf zoxide glow lazygit fd bat
 curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
 fisher install jorgebucaran/fisher
 fisher install PatrickF1/fzf.fish
 ```
 
-Luego agrega a `~/.config/fish/config.fish`:
+Agrega a `~/.config/fish/config.fish`:
 
-```bash
+```fish
 zoxide init fish | source
 ```
 
 Y recarga:
 
-```bash
+```fish
 exec fish
 ```
